@@ -1,0 +1,84 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+#<<< API Gateway / Routes
+      routes:
+        - id: claimrequest
+          uri: http://localhost:8082
+          predicates:
+            - Path=/claims/**, 
+        - id: claimreview
+          uri: http://localhost:8083
+          predicates:
+            - Path=/reviews/**, 
+        - id: customercenter
+          uri: http://localhost:8084
+          predicates:
+            - Path=, /dashboards/**
+        - id: 블랙유저
+          uri: http://localhost:8085
+          predicates:
+            - Path=/블랙컨슈머/**, 
+        - id: frontend
+          uri: http://localhost:8080
+          predicates:
+            - Path=/**
+#>>> API Gateway / Routes
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: claimrequest
+          uri: http://claimrequest:8080
+          predicates:
+            - Path=/claims/**, 
+        - id: claimreview
+          uri: http://claimreview:8080
+          predicates:
+            - Path=/reviews/**, 
+        - id: customercenter
+          uri: http://customercenter:8080
+          predicates:
+            - Path=, 
+        - id: 블랙유저
+          uri: http://블랙유저:8080
+          predicates:
+            - Path=/블랙컨슈머/**, 
+        - id: frontend
+          uri: http://frontend:8080
+          predicates:
+            - Path=/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
